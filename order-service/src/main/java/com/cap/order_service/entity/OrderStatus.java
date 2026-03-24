@@ -1,0 +1,21 @@
+package com.cap.order_service.entity;
+
+public enum OrderStatus {
+
+    CART,
+    CHECKOUT_STARTED,
+
+    PRESCRIPTION_PENDING,
+    PRESCRIPTION_APPROVED,
+    PRESCRIPTION_REJECTED,
+
+    PAYMENT_PENDING,
+    PAID,
+
+    PACKED,
+    OUT_FOR_DELIVERY,
+    DELIVERED,
+
+    CANCELLED,
+    PAYMENT_FAILED
+}
