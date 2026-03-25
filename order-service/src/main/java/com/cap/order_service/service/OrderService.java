@@ -4,6 +4,7 @@ import com.cap.order_service.entity.*;
 import com.cap.order_service.exception.ApiException;
 import com.cap.order_service.feign.CatalogClient;
 import com.cap.order_service.repository.*;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +25,13 @@ public class OrderService {
         List<OrderItem> orderItems = items.stream()
                 .map(item -> {
 
-                    MedicineResponse medicine =
-                            catalogClient.getMedicine(item.getMedicineId());
+                    MedicineResponse medicine;
+
+                    try {
+                        medicine = catalogClient.getMedicine(item.getMedicineId());
+                    } catch (FeignException e) {
+                        throw new ApiException("Medicine not found");
+                    }
 
                     if (medicine.getStock() < item.getQuantity()) {
                         throw new ApiException("Insufficient stock for " + medicine.getName());
@@ -61,6 +67,16 @@ public class OrderService {
         orderItems.forEach(item -> item.setOrder(order));
 
         return orderRepository.save(order);
+    }
+
+    public void updateOrderStatus(Long id, String status) {
+
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Order not found"));
+
+        order.setStatus(OrderStatus.valueOf(status));
+
+        orderRepository.save(order);
     }
 
     // 🔹 START CHECKOUT

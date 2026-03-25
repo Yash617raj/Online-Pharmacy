@@ -22,16 +22,16 @@ public class OrderController {
 
     // 🔹 CREATE CART
     @PostMapping("/cart")
-    public ResponseEntity<Order> createCart(
+    public ResponseEntity<OrderResponse> createCart(
             @RequestBody List<CartItemRequest> items,
             @RequestHeader("Authorization") String authHeader) {
 
         String token = authHeader.substring(7);
         String email = jwtUtil.extractUsername(token);
 
-        return ResponseEntity.ok(
-                service.createCart(email, items)
-        );
+        Order order = service.createCart(email, items);
+
+        return ResponseEntity.ok(service.getOrder(order.getId())); // 🔥 return DTO
     }
 
     // 🔹 START CHECKOUT
@@ -62,6 +62,16 @@ public class OrderController {
         return ResponseEntity.ok(
                 service.getOrder(id)
         );
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateOrderStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
+
+        service.updateOrderStatus(id, status);
+
+        return ResponseEntity.ok("Order status updated");
     }
 
     // 🔹 GET USER ORDERS

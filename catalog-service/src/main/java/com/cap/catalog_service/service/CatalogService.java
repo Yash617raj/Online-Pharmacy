@@ -47,6 +47,24 @@ public class CatalogService {
                 .toList();
     }
 
+    public List<Prescription> getAllPrescriptions() {
+        return prescriptionRepository.findAll();
+    }
+
+    // 🔹 CREATE CATEGORY
+    public void createCategory(CategoryDTO dto) {
+
+        categoryRepository.findByName(dto.getName())
+                .ifPresent(c -> {
+                    throw new ApiException("Category already exists");
+                });
+
+        Category category = new Category();
+        category.setName(dto.getName());
+
+        categoryRepository.save(category);
+    }
+
     // 🔹 CREATE MEDICINE (Admin)
     public void createMedicine(MedicineRequest request) {
 
@@ -54,6 +72,7 @@ public class CatalogService {
                 .orElseThrow(() -> new ApiException("Category not found"));
 
         Medicine medicine = mapper.map(request, Medicine.class);
+        medicine.setId(null);
         medicine.setCategory(category);
 
         medicineRepository.save(medicine);
@@ -85,7 +104,15 @@ public class CatalogService {
 
         prescriptionRepository.save(prescription);
     }
+    public void updatePrescriptionStatus(Long id, String status) {
 
+        Prescription p = prescriptionRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Prescription not found"));
+
+        p.setStatus(status);
+
+        prescriptionRepository.save(p);
+    }
     // 🔹 Helper method
     private MedicineResponse mapToResponse(Medicine medicine) {
         return MedicineResponse.builder()
@@ -95,7 +122,11 @@ public class CatalogService {
                 .price(medicine.getPrice())
                 .stock(medicine.getStock())
                 .prescriptionRequired(medicine.isPrescriptionRequired())
-                .categoryName(medicine.getCategory().getName())
+                .categoryName(
+                        medicine.getCategory() != null
+                                ? medicine.getCategory().getName()
+                                : "N/A"
+                )
                 .build();
     }
 }

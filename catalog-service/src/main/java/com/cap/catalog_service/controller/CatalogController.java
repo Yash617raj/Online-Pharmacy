@@ -1,5 +1,7 @@
 package com.cap.catalog_service.controller;
 import com.cap.catalog_service.dto.*;
+import com.cap.catalog_service.entity.Category;
+import com.cap.catalog_service.entity.Prescription;
 import com.cap.catalog_service.exception.ApiException;
 import com.cap.catalog_service.service.CatalogService;
 import com.cap.catalog_service.util.JwtUtil;
@@ -18,13 +20,13 @@ public class CatalogController {
     private final JwtUtil jwtUtil;
     private final CatalogService service;
 
-    // 🔹 GET ALL MEDICINES
+    // GET ALL MEDICINES
     @GetMapping("/medicines")
     public ResponseEntity<List<MedicineResponse>> getAllMedicines() {
         return ResponseEntity.ok(service.getAllMedicines());
     }
 
-    // 🔹 GET MEDICINE BY ID
+    // GET MEDICINE BY ID
     @GetMapping("/medicines/{id}")
     public ResponseEntity<MedicineResponse> getMedicine(
             @PathVariable Long id) {
@@ -32,7 +34,7 @@ public class CatalogController {
         return ResponseEntity.ok(service.getMedicine(id));
     }
 
-    // 🔹 SEARCH MEDICINES
+    // SEARCH MEDICINES
     @GetMapping("/medicines/search")
     public ResponseEntity<List<MedicineResponse>> searchMedicines(
             @RequestParam String keyword) {
@@ -40,7 +42,20 @@ public class CatalogController {
         return ResponseEntity.ok(service.searchMedicines(keyword));
     }
 
-    // 🔹 CREATE MEDICINE (ADMIN use — later secured)
+    @PostMapping("/categories")
+    public ResponseEntity<?> createCategory(@RequestBody CategoryDTO dto) {
+
+        service.createCategory(dto);
+
+        return ResponseEntity.ok("Category created");
+    }
+
+    @GetMapping("/prescriptions")
+    public ResponseEntity<List<Prescription>> getAllPrescriptions() {
+        return ResponseEntity.ok(service.getAllPrescriptions());
+    }
+
+    //CREATE MEDICINE
     @PostMapping("/medicines")
     public ResponseEntity<?> createMedicine(
             @Valid @RequestBody MedicineRequest request,
@@ -50,7 +65,7 @@ public class CatalogController {
 
         String role = jwtUtil.extractRole(token);
 
-        // 🔥 ADMIN CHECK
+        // ADMIN CHECK
         if (!"ADMIN".equals(role)) {
             throw new ApiException("Access denied. Admin only.");
         }
@@ -59,8 +74,16 @@ public class CatalogController {
 
         return ResponseEntity.ok("Medicine created");
     }
+    @PutMapping("/prescriptions/{id}/status")
+    public ResponseEntity<?> updatePrescriptionStatus(
+            @PathVariable Long id,
+            @RequestParam String status) {
 
-    // 🔹 UPLOAD PRESCRIPTION
+        service.updatePrescriptionStatus(id, status);
+
+        return ResponseEntity.ok("Prescription updated");
+    }
+    // UPLOAD PRESCRIPTION
     @PostMapping(value = "/prescriptions/upload", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadPrescription(
             @ModelAttribute PrescriptionUploadRequest request,
