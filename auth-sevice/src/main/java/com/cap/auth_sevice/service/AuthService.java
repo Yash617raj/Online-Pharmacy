@@ -30,7 +30,6 @@ public class AuthService {
             throw new ApiException("Email already registered");
         }
 
-        // map DTO → Entity
         User user = mapper.map(request, User.class);
 
         // encode password

@@ -17,7 +17,7 @@ public class Prescription {
 
     private String status; // PENDING, APPROVED, REJECTED
 
-    private String userEmail; // from JWT
+    private String userEmail;
 
     @ManyToOne
     private Medicine medicine;

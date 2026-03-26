@@ -6,9 +6,7 @@ import java.util.List;
 
 public interface AdminActionLogRepository extends JpaRepository<AdminActionLog, Long> {
 
-    // 🔍 Get logs by admin
     List<AdminActionLog> findByAdminEmail(String adminEmail);
 
-    // 🔍 Get logs by action type
     List<AdminActionLog> findByAction(String action);
 }

@@ -2,12 +2,12 @@ package com.cap.admin_service.controller;
 
 import com.cap.admin_service.dto.OrderResponse;
 import com.cap.admin_service.dto.PrescriptionDTO;
-import com.cap.admin_service.exception.ApiException;
 import com.cap.admin_service.service.AdminService;
-import com.cap.admin_service.util.JwtUtil;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,70 +18,43 @@ import java.util.List;
 public class AdminController {
 
     private final AdminService service;
-    private final JwtUtil jwtUtil;
 
-    // 🔐 COMMON ADMIN CHECK
-    private String validateAdmin(String authHeader) {
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new ApiException("Invalid Authorization header");
-        }
-
-        String token = authHeader.substring(7);
-        String role = jwtUtil.extractRole(token);
-
-        if (!"ADMIN".equals(role)) {
-            throw new ApiException("Access denied. Admin only.");
-        }
-
-        return jwtUtil.extractUsername(token);
-    }
-
-    // 🔹 GET ALL PRESCRIPTIONS
+    // GET ALL PRESCRIPTIONS
     @GetMapping("/prescriptions")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PrescriptionDTO>> getPrescriptions(
-            @RequestHeader("Authorization") String authHeader) {
-
-        validateAdmin(authHeader);
+            @AuthenticationPrincipal String adminEmail) {
 
         return ResponseEntity.ok(service.getAllPrescriptions());
     }
 
-    // 🔹 APPROVE / REJECT PRESCRIPTION
+    // APPROVE / REJECT PRESCRIPTION
     @PutMapping("/prescriptions/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updatePrescription(
             @PathVariable Long id,
             @RequestParam String status,
-            @RequestHeader("Authorization") String authHeader) {
+            @AuthenticationPrincipal String adminEmail) {
 
-        String adminEmail = validateAdmin(authHeader);
-
-        return ResponseEntity.ok(
-                service.updatePrescription(id, status, adminEmail)
-        );
+        return ResponseEntity.ok(service.updatePrescription(id, status, adminEmail));
     }
 
-    // 🔹 GET ALL ORDERS
+    // GET ALL ORDERS
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderResponse>> getOrders(
-            @RequestHeader("Authorization") String authHeader) {
-
-        validateAdmin(authHeader);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<OrderResponse>> getOrders() {
 
         return ResponseEntity.ok(service.getAllOrders());
     }
 
-    // 🔹 UPDATE ORDER STATUS
+    // UPDATE ORDER STATUS
     @PutMapping("/orders/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateOrderStatus(
             @PathVariable Long id,
             @RequestParam @NotBlank String status,
-            @RequestHeader("Authorization") String authHeader) {
+            @AuthenticationPrincipal String adminEmail) {
 
-        String adminEmail = validateAdmin(authHeader);
-
-        return ResponseEntity.ok(
-                service.updateOrderStatus(id, status, adminEmail)
-        );
+        return ResponseEntity.ok(service.updateOrderStatus(id, status, adminEmail));
     }
 }

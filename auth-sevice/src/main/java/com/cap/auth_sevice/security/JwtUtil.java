@@ -15,21 +15,19 @@ import java.util.Map;
 @Component
 public class JwtUtil {
 
-//    @Value("${jwt.secret}")
-    private String secret="mysupersecuresecretkeythatmustbeatleast32charslong";
+    private String secret = "mysupersecuresecretkeythatmustbeatleast32charslong";
 
     @Value("${jwt.expiration:86400000}")
     private long expiration;
 
     private SecretKey key;
+
     @PostConstruct
     public void init() {
-        System.out.println("SECRET = " + secret);
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String generateToken(String email, Role role) {
-
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role.name());
 

@@ -1,5 +1,6 @@
 package com.cap.api_gateway.util;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -11,7 +12,6 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtUtil {
 
-//    @Value("${jwt.secret}")
     private String secret="mysupersecuresecretkeythatmustbeatleast32charslong";
 
     private SecretKey key;
@@ -34,11 +34,18 @@ public class JwtUtil {
     }
 
     public String extractUsername(String token) {
+        return getClaims(token).getSubject();
+    }
+
+    public String extractRole(String token) {
+        return (String) getClaims(token).get("role");
+    }
+
+    private Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+                .getPayload();
     }
 }

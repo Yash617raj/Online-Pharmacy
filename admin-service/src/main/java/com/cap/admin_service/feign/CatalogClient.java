@@ -9,11 +9,11 @@ import java.util.List;
 @FeignClient(name = "CATALOG-SERVICE", configuration = FeignConfig.class)
 public interface CatalogClient {
 
-    // 🔹 GET ALL PRESCRIPTIONS
+    // GET ALL PRESCRIPTIONS
     @GetMapping("/api/catalog/prescriptions")
     List<PrescriptionDTO> getAllPrescriptions();
 
-    // 🔹 UPDATE PRESCRIPTION STATUS
+    // UPDATE PRESCRIPTION STATUS
     @PutMapping("/api/catalog/prescriptions/{id}/status")
     String updatePrescriptionStatus(
             @PathVariable Long id,

@@ -26,7 +26,7 @@ public class Order {
 
     private String address;
 
-    // 🔗 Order → OrderItems
+    //Order → OrderItems
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> items;
 }

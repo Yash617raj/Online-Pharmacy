@@ -3,13 +3,13 @@ package com.cap.order_service.controller;
 import com.cap.order_service.dto.*;
 import com.cap.order_service.entity.Order;
 import com.cap.order_service.service.OrderService;
-import com.cap.order_service.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -18,72 +18,58 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService service;
-    private final JwtUtil jwtUtil;
 
-    // 🔹 CREATE CART
+    // CREATE CART
     @PostMapping("/cart")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderResponse> createCart(
             @RequestBody List<CartItemRequest> items,
-            @RequestHeader("Authorization") String authHeader) {
-
-        String token = authHeader.substring(7);
-        String email = jwtUtil.extractUsername(token);
+            @AuthenticationPrincipal String email) {
 
         Order order = service.createCart(email, items);
-
-        return ResponseEntity.ok(service.getOrder(order.getId())); // 🔥 return DTO
+        return ResponseEntity.ok(service.getOrder(order.getId()));
     }
 
-    // 🔹 START CHECKOUT
+    // START CHECKOUT
     @PostMapping("/checkout/start")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderResponse> checkout(
             @RequestParam Long orderId,
             @Valid @RequestBody CheckoutRequest request) {
 
-        return ResponseEntity.ok(
-                service.startCheckout(orderId, request)
-        );
+        return ResponseEntity.ok(service.startCheckout(orderId, request));
     }
 
-    // 🔹 INITIATE PAYMENT
+    // INITIATE PAYMENT
     @PostMapping("/payments/initiate")
-    public ResponseEntity<?> payment(
-            @Valid @RequestBody PaymentRequest request) {
-
-        return ResponseEntity.ok(
-                service.initiatePayment(request)
-        );
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> payment(@Valid @RequestBody PaymentRequest request) {
+        return ResponseEntity.ok(service.initiatePayment(request));
     }
 
-    // 🔹 GET ORDER BY ID
+    // GET ORDER BY ID
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                service.getOrder(id)
-        );
+        return ResponseEntity.ok(service.getOrder(id));
     }
 
+    // UPDATE ORDER STATUS
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateOrderStatus(
             @PathVariable Long id,
             @RequestParam String status) {
 
         service.updateOrderStatus(id, status);
-
         return ResponseEntity.ok("Order status updated");
     }
 
-    // 🔹 GET USER ORDERS
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<OrderResponse>> getOrders(
-            @RequestHeader("Authorization") String authHeader) {
+            @AuthenticationPrincipal String email) {
 
-        String token = authHeader.substring(7);
-        String email = jwtUtil.extractUsername(token);
-
-        return ResponseEntity.ok(
-                service.getUserOrders(email)
-        );
+        return ResponseEntity.ok(service.getUserOrders(email));
     }
 }

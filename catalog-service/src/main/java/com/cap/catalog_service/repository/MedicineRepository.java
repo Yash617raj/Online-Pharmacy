@@ -7,9 +7,7 @@ import java.util.List;
 
 public interface MedicineRepository extends JpaRepository<Medicine, Long> {
 
-    // 🔍 Search by name (PRD requirement)
     List<Medicine> findByNameContainingIgnoreCase(String name);
 
-    // 🔍 Filter by category
     List<Medicine> findByCategoryId(Long categoryId);
 }

@@ -20,7 +20,7 @@ public class CatalogService {
     private final PrescriptionRepository prescriptionRepository;
     private final ModelMapper mapper;
 
-    // 🔹 GET ALL MEDICINES
+    //GET ALL MEDICINES
     public List<MedicineResponse> getAllMedicines() {
 
         return medicineRepository.findAll()
@@ -29,7 +29,7 @@ public class CatalogService {
                 .toList();
     }
 
-    // 🔹 GET MEDICINE BY ID
+    //GET MEDICINE BY ID
     public MedicineResponse getMedicine(Long id) {
 
         Medicine medicine = medicineRepository.findById(id)
@@ -38,7 +38,7 @@ public class CatalogService {
         return mapToResponse(medicine);
     }
 
-    // 🔹 SEARCH MEDICINE
+    //SEARCH MEDICINE
     public List<MedicineResponse> searchMedicines(String keyword) {
 
         return medicineRepository.findByNameContainingIgnoreCase(keyword)
@@ -51,7 +51,7 @@ public class CatalogService {
         return prescriptionRepository.findAll();
     }
 
-    // 🔹 CREATE CATEGORY
+    //CREATE CATEGORY
     public void createCategory(CategoryDTO dto) {
 
         categoryRepository.findByName(dto.getName())
@@ -65,7 +65,7 @@ public class CatalogService {
         categoryRepository.save(category);
     }
 
-    // 🔹 CREATE MEDICINE (Admin)
+    //CREATE MEDICINE (Admin)
     public void createMedicine(MedicineRequest request) {
 
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -78,7 +78,7 @@ public class CatalogService {
         medicineRepository.save(medicine);
     }
 
-    // 🔹 UPLOAD PRESCRIPTION
+    //UPLOAD PRESCRIPTION
     public void uploadPrescription(PrescriptionUploadRequest request,
                                    String userEmail) {
 
@@ -87,12 +87,10 @@ public class CatalogService {
 
         MultipartFile file = request.getFile();
 
-        // 🔥 Basic validation
         if (file.isEmpty()) {
             throw new ApiException("File is empty");
         }
 
-        // ⚠️ For now (simple version)
         String fileUrl = "uploads/" + file.getOriginalFilename();
 
         Prescription prescription = Prescription.builder()
@@ -113,7 +111,7 @@ public class CatalogService {
 
         prescriptionRepository.save(p);
     }
-    // 🔹 Helper method
+    // Helper method
     private MedicineResponse mapToResponse(Medicine medicine) {
         return MedicineResponse.builder()
                 .id(medicine.getId())
