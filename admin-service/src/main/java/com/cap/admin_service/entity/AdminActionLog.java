@@ -18,11 +18,9 @@ public class AdminActionLog {
 
     private String adminEmail;
 
-    private String action;
-    // APPROVED_PRESCRIPTION, UPDATED_ORDER
+    private String action; // APPROVED_PRESCRIPTION, UPDATED_ORDER
 
-    private String targetType;
-    // PRESCRIPTION, ORDER
+    private String targetType; // PRESCRIPTION, ORDER
 
     private Long targetId;
 

@@ -20,7 +20,6 @@ public class CatalogService {
     private final PrescriptionRepository prescriptionRepository;
     private final ModelMapper mapper;
 
-    //GET ALL MEDICINES
     public List<MedicineResponse> getAllMedicines() {
 
         return medicineRepository.findAll()
@@ -29,7 +28,6 @@ public class CatalogService {
                 .toList();
     }
 
-    //GET MEDICINE BY ID
     public MedicineResponse getMedicine(Long id) {
 
         Medicine medicine = medicineRepository.findById(id)
@@ -38,7 +36,6 @@ public class CatalogService {
         return mapToResponse(medicine);
     }
 
-    //SEARCH MEDICINE
     public List<MedicineResponse> searchMedicines(String keyword) {
 
         return medicineRepository.findByNameContainingIgnoreCase(keyword)
@@ -51,7 +48,6 @@ public class CatalogService {
         return prescriptionRepository.findAll();
     }
 
-    //CREATE CATEGORY
     public void createCategory(CategoryDTO dto) {
 
         categoryRepository.findByName(dto.getName())
@@ -65,7 +61,6 @@ public class CatalogService {
         categoryRepository.save(category);
     }
 
-    //CREATE MEDICINE (Admin)
     public void createMedicine(MedicineRequest request) {
 
         Category category = categoryRepository.findById(request.getCategoryId())
@@ -78,7 +73,6 @@ public class CatalogService {
         medicineRepository.save(medicine);
     }
 
-    //UPLOAD PRESCRIPTION
     public void uploadPrescription(PrescriptionUploadRequest request,
                                    String userEmail) {
 
@@ -111,7 +105,7 @@ public class CatalogService {
 
         prescriptionRepository.save(p);
     }
-    // Helper method
+
     private MedicineResponse mapToResponse(Medicine medicine) {
         return MedicineResponse.builder()
                 .id(medicine.getId())

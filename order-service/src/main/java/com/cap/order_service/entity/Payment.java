@@ -18,5 +18,5 @@ public class Payment {
 
     private Double amount;
 
-    private String status; // SUCCESS / FAILED
+    private String status; // SUCCESS FAILED
 }

@@ -18,8 +18,6 @@ public class OrderService {
     private final PaymentRepository paymentRepository;
     private final CatalogClient catalogClient;
 
-
-    // CREATE CART
     public Order createCart(String userEmail, List<CartItemRequest> items) {
 
         List<OrderItem> orderItems = items.stream()
@@ -78,7 +76,6 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    //START CHECKOUT
     public OrderResponse startCheckout(Long orderId, CheckoutRequest request) {
 
         Order order = orderRepository.findById(orderId)
@@ -96,7 +93,6 @@ public class OrderService {
         return mapToResponse(order);
     }
 
-    // INITIATE PAYMENT
     public String initiatePayment(PaymentRequest request) {
 
         Order order = orderRepository.findById(request.getOrderId())
@@ -106,7 +102,6 @@ public class OrderService {
             throw new ApiException("Order not ready for payment");
         }
 
-        // Simulate payment success
         Payment payment = Payment.builder()
                 .orderId(order.getId())
                 .amount(order.getTotalAmount())
@@ -121,7 +116,6 @@ public class OrderService {
         return "Payment successful";
     }
 
-    //GET ORDER BY ID
     public OrderResponse getOrder(Long id) {
 
         Order order = orderRepository.findById(id)
@@ -130,7 +124,6 @@ public class OrderService {
         return mapToResponse(order);
     }
 
-    //GET USER ORDERS
     public List<OrderResponse> getUserOrders(String userEmail) {
 
         return orderRepository.findByUserEmail(userEmail)
@@ -139,7 +132,6 @@ public class OrderService {
                 .toList();
     }
 
-    //HELPER
     private OrderResponse mapToResponse(Order order) {
 
         List<OrderItemDTO> items = order.getItems()

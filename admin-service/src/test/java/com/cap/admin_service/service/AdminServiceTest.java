@@ -32,10 +32,6 @@ class AdminServiceTest {
     @InjectMocks
     private AdminService adminService;
 
-    // =========================
-    // GET ALL PRESCRIPTIONS
-    // =========================
-
     @Test
     void getAllPrescriptions_success() {
         List<PrescriptionDTO> mockList = List.of(new PrescriptionDTO());
@@ -56,10 +52,6 @@ class AdminServiceTest {
 
         assertTrue(result.isEmpty());
     }
-
-    // =========================
-    // UPDATE PRESCRIPTION
-    // =========================
 
     @Test
     void updatePrescription_success_APPROVED() {
@@ -106,10 +98,6 @@ class AdminServiceTest {
         );
     }
 
-    // =========================
-    // GET ALL ORDERS
-    // =========================
-
     @Test
     void getAllOrders_success() {
         List<OrderResponse> orders = List.of(new OrderResponse());
@@ -130,10 +118,6 @@ class AdminServiceTest {
 
         assertTrue(result.isEmpty());
     }
-
-    // =========================
-    // UPDATE ORDER STATUS
-    // =========================
 
     @Test
     void updateOrderStatus_success() {

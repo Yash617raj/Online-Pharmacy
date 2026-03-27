@@ -19,7 +19,6 @@ public class OrderController {
 
     private final OrderService service;
 
-    // CREATE CART
     @PostMapping("/cart")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderResponse> createCart(
@@ -30,7 +29,6 @@ public class OrderController {
         return ResponseEntity.ok(service.getOrder(order.getId()));
     }
 
-    // START CHECKOUT
     @PostMapping("/checkout/start")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderResponse> checkout(
@@ -40,21 +38,18 @@ public class OrderController {
         return ResponseEntity.ok(service.startCheckout(orderId, request));
     }
 
-    // INITIATE PAYMENT
     @PostMapping("/payments/initiate")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> payment(@Valid @RequestBody PaymentRequest request) {
         return ResponseEntity.ok(service.initiatePayment(request));
     }
 
-    // GET ORDER BY ID
     @GetMapping("/{id}")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<OrderResponse> getOrder(@PathVariable Long id) {
         return ResponseEntity.ok(service.getOrder(id));
     }
 
-    // UPDATE ORDER STATUS
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateOrderStatus(

@@ -22,38 +22,27 @@ public class AuthService {
     private final JwtUtil jwtUtil;
     private final ModelMapper mapper;
 
-    // REGISTER
     public void register(RegisterRequest request) {
 
-        // check if user already exists
         if (repository.findByEmail(request.getEmail()).isPresent()) {
             throw new ApiException("Email already registered");
         }
-
         User user = mapper.map(request, User.class);
 
-        // encode password
         user.setPassword(encoder.encode(request.getPassword()));
-
-        // assign default role
         user.setRole(Role.USER);
-
-        // save
         repository.save(user);
     }
 
-    // LOGIN
     public AuthResponse login(AuthRequest request) {
 
         User user = repository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ApiException("User not found"));
 
-        // check password
         if (!encoder.matches(request.getPassword(), user.getPassword())) {
             throw new ApiException("Invalid credentials");
         }
 
-        // generate JWT
         String token = jwtUtil.generateToken(
                 user.getEmail(),
                 user.getRole()

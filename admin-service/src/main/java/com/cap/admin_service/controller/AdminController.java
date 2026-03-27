@@ -19,7 +19,6 @@ public class AdminController {
 
     private final AdminService service;
 
-    // GET ALL PRESCRIPTIONS
     @GetMapping("/prescriptions")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<PrescriptionDTO>> getPrescriptions(
@@ -28,7 +27,6 @@ public class AdminController {
         return ResponseEntity.ok(service.getAllPrescriptions());
     }
 
-    // APPROVE / REJECT PRESCRIPTION
     @PutMapping("/prescriptions/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updatePrescription(
@@ -39,7 +37,6 @@ public class AdminController {
         return ResponseEntity.ok(service.updatePrescription(id, status, adminEmail));
     }
 
-    // GET ALL ORDERS
     @GetMapping("/orders")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<OrderResponse>> getOrders() {
@@ -47,7 +44,6 @@ public class AdminController {
         return ResponseEntity.ok(service.getAllOrders());
     }
 
-    // UPDATE ORDER STATUS
     @PutMapping("/orders/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateOrderStatus(

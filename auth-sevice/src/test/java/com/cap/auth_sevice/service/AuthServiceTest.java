@@ -29,8 +29,6 @@ class AuthServiceTest {
 
     @InjectMocks private AuthService authService;
 
-    // ─── HELPERS ─────────────────────────
-
     private RegisterRequest registerReq() {
         RegisterRequest r = new RegisterRequest();
         r.setEmail("test@gmail.com");
@@ -52,8 +50,6 @@ class AuthServiceTest {
         u.setRole(Role.USER);
         return u;
     }
-
-    // ─── REGISTER TESTS (8) ─────────────────────────
 
     @Test
     void register_Success() {
@@ -157,8 +153,6 @@ class AuthServiceTest {
 
         verify(repository, never()).save(any());
     }
-
-    // ─── LOGIN TESTS (7) ─────────────────────────
 
     @Test
     void login_Success() {

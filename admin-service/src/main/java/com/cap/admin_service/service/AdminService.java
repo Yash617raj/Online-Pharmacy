@@ -21,12 +21,10 @@ public class AdminService {
     private final OrderClient orderClient;
     private final AdminActionLogRepository logRepository;
 
-    // GET ALL PRESCRIPTIONS
     public List<PrescriptionDTO> getAllPrescriptions() {
         return catalogClient.getAllPrescriptions();
     }
 
-    //APPROVE / REJECT PRESCRIPTION
     public String updatePrescription(Long id, String status, String adminEmail) {
 
         if (!status.equals("APPROVED") && !status.equals("REJECTED")) {
@@ -35,7 +33,6 @@ public class AdminService {
 
         String response = catalogClient.updatePrescriptionStatus(id, status);
 
-        // LOG ACTION
         logRepository.save(
                 AdminActionLog.builder()
                         .adminEmail(adminEmail)
@@ -49,12 +46,10 @@ public class AdminService {
         return response;
     }
 
-    // GET ALL ORDERS
     public List<OrderResponse> getAllOrders() {
         return orderClient.getAllOrders();
     }
 
-    // UPDATE ORDER STATUS
     public String updateOrderStatus(Long orderId, String status, String adminEmail) {
 
         if (status == null || status.isBlank()) {
@@ -63,7 +58,6 @@ public class AdminService {
 
         String response = orderClient.updateOrderStatus(orderId, status);
 
-        // LOG ACTION
         logRepository.save(
                 AdminActionLog.builder()
                         .adminEmail(adminEmail)
@@ -73,7 +67,6 @@ public class AdminService {
                         .timestamp(LocalDateTime.now())
                         .build()
         );
-
         return response;
     }
 }

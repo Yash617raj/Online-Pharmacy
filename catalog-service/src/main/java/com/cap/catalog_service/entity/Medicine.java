@@ -23,7 +23,6 @@ public class Medicine {
 
     private boolean prescriptionRequired;
 
-    // 🔗 Relation with Category
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
